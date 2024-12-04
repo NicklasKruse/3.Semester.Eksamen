@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  backendapi:
+    image: ${DOCKER_REGISTRY-}backendapi
+    build:
+      context: .
+      dockerfile: BackendApi/Dockerfile
+
+  webappfront:
+    image: ${DOCKER_REGISTRY-}webappfront
+    build:
+      context: .
+      dockerfile: WebAppFront/Dockerfile
+  fake-smtp-server:
+    image: haravich/fake-smtp-server
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+
+  sqlserver:
+     image: mcr.microsoft.com/mssql/server:2022-latest
+     environment:
+        - ACCEPT_EULA=Y
+        - MSSQL_SA_PASSWORD=********
+     ports:
+        - "1433:1433"

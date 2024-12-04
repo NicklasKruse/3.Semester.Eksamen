@@ -1,0 +1,75 @@
+﻿@page
+@model WebAppFront.Pages.Booking.IndexModel
+@{
+    ViewData["Title"] = "Booking";
+}
+<style>
+    .booking-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<p>Book et værelse eller lån et værktøj</p>
+
+<h1>Nuværende bookede items</h1>
+<div>
+    @foreach (var booking in Model.SortedBookings)
+    {
+        @if (booking.EndDate > DateTime.Now)
+        {
+            <div class="booking-box">
+                <p><strong>Item ID:</strong> @booking.ItemId</p>
+                <p><strong>Created By:</strong> @booking.CreatedBy</p>
+                <p><strong>Date Range:</strong> @booking.StartDate - @booking.EndDate</p>
+                <!-- Delete Button -->
+                <form asp-page-handler="Delete" method="post">
+                    <input type="hidden" name="id" value="@booking.Id" />
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        }
+    }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    else if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+</div>
+
+
+
+
+@* <h1>Bookings by Date Range</h1>
+<form method="post">
+    <input type="date" asp-for="SelectedStartDate" />
+    <input type="date" asp-for="SelectedEndDate" />
+    <button type="submit">Filter</button>
+</form> *@
+<div>
+    @if (Model.SelectedDateRangeBookings != null)
+    {
+        foreach (var booking in Model.SelectedDateRangeBookings)
+        {
+            <div class="booking-box">
+                <p><strong>Date Range:</strong> @booking.StartDate - @booking.EndDate</p>
+            </div>
+        }
+    }
+</div>
+
+<a asp-page="./Create">Opret Booking</a>
+@if (User.IsInRole("Formand") || User.IsInRole("Bestyrelse"))
+{
+    <a asp-page="/Item/Index">Se alle items</a>
+}
+
